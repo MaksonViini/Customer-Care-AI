@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "description": "Problema com Reembolso: O cliente está com dificuldades para obter o reembolso de uma despesa coberta pelo seguro. Ele precisa de assistência para entender o processo de solicitação e acelerar o reembolso."
+    },
+    {
+        "id": 2,
+        "description": "Sinistro de Veículo: O cliente sofreu um acidente de trânsito e precisa iniciar o processo de sinistro do seu veículo. Ele precisa de orientações sobre os documentos necessários, procedimentos de avaliação e prazos para resolução."
+    },
+    {
+        "id": 3,
+        "description": "Alteração de Dados Pessoais: O cliente mudou de endereço ou número de telefone e precisa atualizar suas informações pessoais no seguro. Ele precisa de ajuda para fazer as alterações necessárias e garantir que seus dados estejam corretos."
+    },
+    {
+        "id": 4,
+        "description": "Renovação de Apólice: O cliente tem uma apólice de seguro que está prestes a vencer e deseja renová-la. Ele precisa de assistência para entender os procedimentos de renovação, possíveis atualizações de cobertura e valores de pagamento."
+    },
+    {
+        "id": 5,
+        "description": "Dúvidas sobre Cobertura: O cliente tem dúvidas sobre quais situações são cobertas pelo seu seguro. Ele precisa de esclarecimentos sobre os termos e condições da apólice, bem como exemplos de eventos que são cobertos pelo seguro."
+    },
+    {
+        "id": 6,
+        "description": "Cancelamento de Apólice: O cliente deseja cancelar sua apólice de seguro. Ele precisa de orientações sobre os procedimentos de cancelamento, possíveis implicações financeiras e prazos para o reembolso de valores pagos."
+    }
+]
