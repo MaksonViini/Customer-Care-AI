@@ -21,7 +21,7 @@ install:
 
 format:
 	@isort .
-	@black .
+	@black src/
 
 lint:
 	@isort . --check
@@ -41,6 +41,9 @@ clean:
 
 run_app:
 	python src/main.py
+
+run_fastapi_app:
+	uvicorn src.main:app --reload
 
 before_push_code:
 	# ${MAKE} doc
