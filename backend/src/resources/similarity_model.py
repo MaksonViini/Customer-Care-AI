@@ -3,6 +3,8 @@ import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from ..database import description_colletion
+
 nlp = spacy.load("pt_core_news_sm")
 
 
@@ -19,13 +21,11 @@ class SimilarityModelError(Exception):
     pass
 
 
-# Path to the JSON data file
-data_file_path = "/home/maksonvinicio/Documents/GitLab-GitHub/Customer-Care-AI/ml_model/data/data.json"
-
-
-def load_data(file_path):
+def load_data():
     try:
-        data = pd.read_json(file_path).reset_index(drop=True)
+        result = description_colletion.find_one({})
+
+        data = pd.DataFrame(result["descriptions"]).reset_index(drop=True)
         data["description"] = data["description"].apply(lambda x: x.lower())
         data["description"] = data["description"].apply(remove_stopwords)
         return data
@@ -53,7 +53,7 @@ def remove_stopwords(text):
 
 def similarity_model(user_input):
     try:
-        vectorizer, tfidf_matrix = instantiate_vectorizer(load_data(data_file_path))
+        vectorizer, tfidf_matrix = instantiate_vectorizer(load_data())
 
         user_input = remove_stopwords(user_input)
 

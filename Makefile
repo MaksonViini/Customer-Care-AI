@@ -21,7 +21,8 @@ install:
 
 format:
 	@isort .
-	@black src/
+	@black backend/src/
+	@black frontend/src/
 
 lint:
 	@isort . --check
@@ -43,7 +44,8 @@ run_app:
 	python src/main.py
 
 run_fastapi_app:
-	uvicorn src.main:app --reload
+	# uvicorn backend.src.main:app --reload
+	uvicorn frontend.src.main:app --reload
 
 before_push_code:
 	# ${MAKE} doc
