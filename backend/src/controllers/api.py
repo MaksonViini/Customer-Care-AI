@@ -3,7 +3,6 @@ from typing import List
 
 import jwt
 import pandas as pd
-import requests
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response
 from fastapi.security import OAuth2PasswordBearer
 from langchain.memory import MongoDBChatMessageHistory

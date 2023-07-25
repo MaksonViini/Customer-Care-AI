@@ -1,13 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
+    
     const chatMessages = document.getElementById("chat-messages");
     const userInput = document.getElementById("user-input");
     const sendButton = document.getElementById("send-button");
     const newChatButton = document.getElementById("new-chat-button");
-
-    // Mensagem de boas-vindas
-    const welcomeMessage = "Bem-vindo ao Chatbot de Atendimento Virtual! Como posso ajudar?";
-    const welcomeMessageElement = createMessageElement(welcomeMessage, "bot-message");
-    chatMessages.appendChild(welcomeMessageElement);
 
     sendButton.addEventListener("click", sendMessage);
     userInput.addEventListener("keypress", function (event) {
@@ -17,12 +13,20 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     newChatButton.addEventListener("click", function () {
-        // Limpar histórico do chat ao iniciar novo chat
-        chatMessages.innerHTML = "";
+        // Criar um novo chat do zero
+        chatMessages.innerHTML = ""; // Limpar o chat anterior
+
+        // Criar a div para a área de mensagens do novo chat
+        const chatMessages = document.createElement("div");
+        chatMessages.id = "chat-messages";
+        chatMessages.appendChild(chatMessages);
+
+        // Adicionar a mensagem de boas-vindas no novo chat
+        const welcomeMessage = "Bem-vindo ao Chatbot de Atendimento Virtual! Como posso ajudar?";
         const welcomeMessageElement = createMessageElement(welcomeMessage, "bot-message");
         chatMessages.appendChild(welcomeMessageElement);
     });
-
+    
     function sendMessage() {
         const userMessage = userInput.value.trim();
 

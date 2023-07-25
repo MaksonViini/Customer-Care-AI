@@ -28,7 +28,8 @@ lint:
 	@isort . --check
 
 req:
-	@pipreqs /src --force
+	@pipreqs --force backend/
+	@pipreqs --force frontend/
 
 doc:
 	@docformatter --in-place --config setup.cfg src/**/*.py
@@ -43,12 +44,17 @@ clean:
 run_app:
 	python src/main.py
 
-run_fastapi_app:
-	# uvicorn backend.src.main:app --reload
-	uvicorn frontend.src.main:app --reload
+run_fastapi_back:
+	uvicorn backend.src.main:app --reload
+
+
+run_fastapi_front:
+	uvicorn frontend.src.main:app --port 8080 --reload
+
 
 before_push_code:
 	# ${MAKE} doc
+	${MAKE} req
 	${MAKE} add_dev_reqs
 	${MAKE} clean
 	${MAKE} format

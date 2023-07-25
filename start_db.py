@@ -1,4 +1,17 @@
-[
+from pymongo import MongoClient
+
+client = MongoClient("localhost", 27017)
+database = client["customer-care-db"]
+
+
+script_collection = database["script"]
+users_collection = database["users"]
+conversations_collection = database["messages"]
+
+
+script_collection.insert_many(
+    
+  [
   {
     "steps": 7,
     "problem": {
@@ -153,3 +166,5 @@
     ]
   }
 ]
+
+)

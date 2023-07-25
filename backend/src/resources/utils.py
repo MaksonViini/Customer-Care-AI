@@ -2,7 +2,7 @@ from ..database import conversations_collection, script_collection
 
 
 def get_dialog_by_index(index: int):
-    return script_collection.find_one({"script_id": index})
+    return script_collection.find_one({"problem.id": index})
 
 
 def get_last_step(existing_dialog):

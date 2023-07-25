@@ -2,8 +2,11 @@ import os
 
 from dotenv import load_dotenv
 from langchain import OpenAI, PromptTemplate
+
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationEntityMemory
+
+from .similarity_model import remove_stopwords
 
 load_dotenv()
 
@@ -48,32 +51,31 @@ def llm_ai_chatbot(human_input, input_memory):
         str: The chatbot's response to the user input.
     """
 
-    # Instanciação do modelo da OpenAI
     llm = OpenAI(
+        temperature=0.5,
         model="text-davinci-003",
         openai_api_key=os.getenv("OPENAI_API_KEY"),
-        max_tokens=256,
+        max_tokens=400,
     )
 
-    # Template para a conversa com variáveis a serem substituídas
     template = """Você é um chatbot conversando com um humano sobre seguros e créditos. Por favor, responda em Português BR e use no máximo 2 linhas.
     Context: {entities}
     Current conversation: {history}
     Humano: {input}
     Chatbot:"""
 
-    # Prompt com variáveis para substituir no template
     prompt = PromptTemplate(
         input_variables=["entities", "history", "input"], template=template
     )
 
-    # Criação da memória da conversa
     memory = ConversationEntityMemory(llm=llm)
 
-    # Extrai o contexto da memória
     memory = extract_context(memory, input_memory)
 
-    # Criação da cadeia de conversa
+
+    prompt.remove_variable_value("history", 1)
+
+
     conversation = ConversationChain(
         llm=llm,
         verbose=True,
@@ -81,5 +83,5 @@ def llm_ai_chatbot(human_input, input_memory):
         memory=memory,
     )
 
-    # Retorno da resposta do chatbot ao input do usuário
-    return conversation.predict(input=human_input)
+
+    return conversation.predict(input=remove_stopwords(human_input))
