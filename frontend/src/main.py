@@ -14,6 +14,7 @@ app.add_middleware(
     allow_credentials=True,
 )
 
+
 app.mount("/static", StaticFiles(directory="frontend/src/static"), name="static")
 
 app.include_router(controller.router)

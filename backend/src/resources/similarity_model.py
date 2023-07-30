@@ -4,7 +4,7 @@ import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from ..database import description_colletion, script_collection
+from ..database import script_collection
 
 nlp = spacy.load("pt_core_news_sm")
 
@@ -77,7 +77,6 @@ def similarity_model(human_input):
 
         data = get_descriptions_dataframe()
 
-
         description_matrix = model.transform(data["description"])
 
         similarity_scores = cosine_similarity(
@@ -85,8 +84,7 @@ def similarity_model(human_input):
         )
         most_similar_index = similarity_scores.argmax()
 
-
-        return int(data.iloc[int(most_similar_index)]["id"]) 
+        return int(data.iloc[int(most_similar_index)]["id"])
 
     except Exception as e:
         raise SimilarityModelError(f"Error in similarity model: {e}") from e

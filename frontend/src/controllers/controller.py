@@ -1,90 +1,105 @@
 import json
+from uuid import UUID
 
 import httpx
-from fastapi import APIRouter, Request
-from fastapi.responses import JSONResponse
+from fastapi import Depends, Request
 from fastapi.templating import Jinja2Templates
 from pymongo import MongoClient
+
+from frontend.src.controllers.route import router
+
+from ..schemas.session import SessionData
+from .sessions import cookie
 
 client = MongoClient("localhost", 27017)
 database = client["customer-care-db"]
 message_collection = database["messages"]
 
-router = APIRouter(
-    prefix="/api",
-    responses={404: {"description": "Not found"}},
-)
 
-# Configurar a pasta onde estão os templates Jinja2
 templates = Jinja2Templates(directory="frontend/src/templates")
 
 
-chat_messages = []  # Lista para armazenar as mensagens do chat
-
-
-# Rota para receber mensagens de chat (POST)
-@router.post("/")
+@router.post("/initial-message")
 async def receive_chat_message(request: Request):
-    data = await request.body()
-
-    print(json.loads(data))
+    data = await request.json()
 
     if not data:
         return {"status": "Error", "message": "Empty request body"}
 
-    try:
-        json_data = json.loads(data)
-    except json.JSONDecodeError as e:
-        return {"status": "Error", "message": f"Invalid JSON format: {str(e)}"}
+    name = data.get("message", "").strip()
 
-    if user_message := json_data.get("message", "").strip():
-        payload = {"user_id": 1, "message": user_message}
+    async with httpx.AsyncClient() as client:
+        url = f"http://127.0.0.1:8080/create_session/{name}"
+        try:
+            response = await client.post(url, timeout=10)
 
-        # Estou com alguns problemas com meu seguro.
+            session_id = response.json()["uuid"]
+
+            print(name)
+            print(session_id)
+
+            return {
+                "answer": "Por favor, informe em poucas palavras como posso ser útil para você hoje.",
+                "Name": name,
+                "Session": session_id,
+            }
+
+        except httpx.HTTPError as e:
+            return {"status": "Error", "message": str(e)}, response.status_code
+
+
+@router.post("/chat")
+async def receive_chat_message_chat(
+    request: Request, session_id: UUID = Depends(cookie)
+):
+    data = await request.json()
+
+    if not data:
+        return {"status": "Error", "message": "Empty request body"}
+
+    if user_message := data.get("message", "").strip():
+        payload = {"user_id": session_id, "message": user_message}
 
         url = "http://127.0.0.1:8000/api/v1/chat"
 
-        return 200
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.post(url, json=payload, timeout=10)
 
-        # async with httpx.AsyncClient() as client:
-        #     try:
-        #         response = await client.post(url, json=payload, timeout=10)
-        #         response.raise_for_status()
-        #         data = response.json()
+                response = response.json()
 
-        #         return {"status": "OK", "message": "Ok!"}, 200
-        #     except httpx.HTTPError as e:
-        #         return {"status": "Error", "message": str(e)}, response.status_code
+                return {"answer": response["message"].get("bot_response")}
 
-    return {"status": "Message received successfully", "messages": chat_messages}
+            except httpx.HTTPError as e:
+                return {"status": "Error", "message": str(e)}, response.status_code
 
 
-# Rota para exibir a página inicial do chat (GET)
+@router.post("/chat_ai", dependencies=[Depends(cookie)])
+async def receive_chat_message_chat_ai(
+    request: Request, session_id: UUID = Depends(cookie)
+):
+    data = await request.json()
+
+    if not data:
+        return {"status": "Error", "message": "Empty request body"}
+
+    if user_message := data.get("message", "").strip():
+        payload = {"user_id": session_id, "message": user_message}
+
+        url = "http://127.0.0.1:8000/api/v1/chat_ai"
+
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.post(url, json=payload, timeout=10)
+
+                response = response.json()
+
+                return {"answer": response}
+
+            except httpx.HTTPError as e:
+                return {"status": "Error", "message": str(e)}, response.status_code
+
+
 @router.get("/")
 async def read_index(request: Request):
-    # messages = message_collection.find({})
-    # chat_messages = [
-    #     [
-    #         {
-    #             "step": 1,
-    #             "user_message": "Estou com alguns problemas com meu seguro. o",
-    #             "bot_response": "Olá! Bem-vindo ao nosso suporte. Como posso ajudar você hoje?",
-    #         },
-    #         {
-    #             "step": 2,
-    #             "user_message": "e agora?",
-    #             "bot_response": "Entendo que você está buscando ajuda para automatizar um processo de atendimento ao cliente no front office. Podemos orientar você nessa questão.",
-    #         },
-    #         {
-    #             "step": 3,
-    #             "user_message": "testando",
-    #             "bot_response": "Você poderia fornecer mais detalhes sobre o processo que deseja automatizar? Quais são as etapas envolvidas e quais são os principais desafios que você está enfrentando em relação à eficiência?",
-    #         },
-    #     ]
-    # ]
-
-    chat_messages = []
-    # chat_messages = [message["message"] for message in messages]
-    return templates.TemplateResponse(
-        "index.html", {"request": request, "chat_messages": chat_messages}
-    )
+    return templates.TemplateResponse("index.html", {"request": request})

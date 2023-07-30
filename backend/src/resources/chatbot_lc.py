@@ -2,7 +2,6 @@ import os
 
 from dotenv import load_dotenv
 from langchain import OpenAI, PromptTemplate
-
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationEntityMemory
 
@@ -58,7 +57,10 @@ def llm_ai_chatbot(human_input, input_memory):
         max_tokens=400,
     )
 
-    template = """Você é um chatbot conversando com um humano sobre seguros e créditos. Por favor, responda em Português BR e use no máximo 2 linhas.
+    template = """Você é um chatbot conversando com um humano sobre seguros e créditos. 
+        Por favor, responda em Português BR e use no máximo 2 linhas. Se o humano quiser falar com algum atendente
+        por favor, diga que "Um atendente entrarar em contato em breve, aguarde!".
+
     Context: {entities}
     Current conversation: {history}
     Humano: {input}
@@ -72,16 +74,11 @@ def llm_ai_chatbot(human_input, input_memory):
 
     memory = extract_context(memory, input_memory)
 
-
-    prompt.remove_variable_value("history", 1)
-
-
     conversation = ConversationChain(
         llm=llm,
         verbose=True,
         prompt=prompt,
         memory=memory,
     )
-
 
     return conversation.predict(input=remove_stopwords(human_input))

@@ -11,4 +11,3 @@ database = client["customer-care-db"]
 script_collection = database["script"]
 users_collection = database["users"]
 conversations_collection = database["messages"]
-

@@ -204,7 +204,7 @@ class ChatBot:
                 }
 
             ai_message = llm_ai_chatbot(
-                input=data.get("message"),
+                human_input=data.get("message"),
                 input_memory=existing_document.get("conversation", []),
             )
 
@@ -220,10 +220,14 @@ class ChatBot:
                 {"user_id": user_id_to_find}, {"$set": existing_document}, upsert=True
             )
 
+            # conversations_collection.update_one(
+            #     {"user_id": user_id_to_find}, {"$push": {"conversation": new_document}}
+            # )
+
             return {"AI_MESSAGE": ai_message}
 
         except ValueError as ve:
             return {"error": str(ve)}
 
         except Exception as e:
-            return {"error": "An unexpected error occurred."}
+            return {"error": f"An unexpected error occurred. {e}"}

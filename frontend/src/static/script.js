@@ -1,64 +1,91 @@
-document.addEventListener("DOMContentLoaded", function () {
-    
-    const chatMessages = document.getElementById("chat-messages");
-    const userInput = document.getElementById("user-input");
-    const sendButton = document.getElementById("send-button");
-    const newChatButton = document.getElementById("new-chat-button");
-
-    sendButton.addEventListener("click", sendMessage);
-    userInput.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            sendMessage();
+class Chatbox {
+    constructor() {
+        this.args = {
+            openButton: document.querySelector('.chatbox__button'),
+            chatBox: document.querySelector('.chatbox__support'),
+            sendButton: document.querySelector('.send__button')
         }
-    });
 
-    newChatButton.addEventListener("click", function () {
-        // Criar um novo chat do zero
-        chatMessages.innerHTML = ""; // Limpar o chat anterior
+        this.state = false;
+        this.messages = [];
+    }
 
-        // Criar a div para a área de mensagens do novo chat
-        const chatMessages = document.createElement("div");
-        chatMessages.id = "chat-messages";
-        chatMessages.appendChild(chatMessages);
+    display() {
+        const {openButton, chatBox, sendButton} = this.args;
 
-        // Adicionar a mensagem de boas-vindas no novo chat
-        const welcomeMessage = "Bem-vindo ao Chatbot de Atendimento Virtual! Como posso ajudar?";
-        const welcomeMessageElement = createMessageElement(welcomeMessage, "bot-message");
-        chatMessages.appendChild(welcomeMessageElement);
-    });
-    
-    function sendMessage() {
-        const userMessage = userInput.value.trim();
+        openButton.addEventListener('click', () => this.toggleState(chatBox))
 
-        if (userMessage !== "") {
-            // Desativar o campo de entrada e o botão de envio após enviar a mensagem
-            userInput.disabled = true;
-            sendButton.disabled = true;
+        sendButton.addEventListener('click', () => this.onSendButton(chatBox))
 
-            const userMessageElement = createMessageElement(userMessage, "user-message");
-            chatMessages.appendChild(userMessageElement);
-            userInput.value = "";
+        const node = chatBox.querySelector('input');
+        node.addEventListener("keyup", ({key}) => {
+            if (key === "Enter") {
+                this.onSendButton(chatBox)
+            }
+        })
+    }
 
-            // Simulando resposta do chatbot (resposta simples por exemplo)
-            const botMessage = "Olá! Eu sou um chatbot. Em que posso ajudar?";
-            const botMessageElement = createMessageElement(botMessage, "bot-message");
-            chatMessages.appendChild(botMessageElement);
+    toggleState(chatbox) {
+        this.state = !this.state;
 
-            // Reativar o campo de entrada e o botão de envio após um atraso de 2 segundos (2000ms)
-            setTimeout(function () {
-                userInput.disabled = false;
-                sendButton.disabled = false;
-            }, 2000);
-
-            // Rolando o chat para cima para exibir as mensagens mais antigas
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        // show or hides the box
+        if(this.state) {
+            chatbox.classList.add('chatbox--active')
+        } else {
+            chatbox.classList.remove('chatbox--active')
         }
     }
 
-    function createMessageElement(message, messageType) {
-        const messageElement = document.createElement("div");
-        messageElement.classList.add("message", messageType);
-        messageElement.innerText = message;
-        return messageElement;
+    onSendButton(chatbox) {
+        var textField = chatbox.querySelector('input');
+        let text1 = textField.value
+        if (text1 === "") {
+            return;
+        }
+
+        let msg1 = { name: "User", message: text1 }
+        this.messages.push(msg1);
+
+        fetch('http://127.0.0.1:8080/', {
+            method: 'POST',
+            body: JSON.stringify({ message: text1 }),
+            mode: 'cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          })
+          .then(r => r.json())
+          .then(r => {
+            let msg2 = { name: "Sam", message: r.answer };
+            this.messages.push(msg2);
+            this.updateChatText(chatbox)
+            textField.value = ''
+
+        }).catch((error) => {
+            console.error('Error:', error);
+            this.updateChatText(chatbox)
+            textField.value = ''
+          });
     }
-});
+
+    updateChatText(chatbox) {
+        var html = '';
+        this.messages.slice().reverse().forEach(function(item, index) {
+            if (item.name === "Sam")
+            {
+                html += '<div class="messages__item messages__item--visitor">' + item.message + '</div>'
+            }
+            else
+            {
+                html += '<div class="messages__item messages__item--operator">' + item.message + '</div>'
+            }
+          });
+
+        const chatmessage = chatbox.querySelector('.chatbox__messages');
+        chatmessage.innerHTML = html;
+    }
+}
+
+
+const chatbox = new Chatbox();
+chatbox.display();
