@@ -347,7 +347,7 @@
 
                 }
 
-                else if (this.messageCount == this.randomNumber) {
+                else if (this.messageCount == this.randomNumber || (this.messageCount - 1) > this.steps) {
                     // Altere a URL e os parâmetros aqui para a rota padrão no servidor
                     fetch('http://127.0.0.1:8080/chat_ai', {
                         method: 'POST',
