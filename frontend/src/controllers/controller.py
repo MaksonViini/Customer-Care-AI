@@ -30,8 +30,10 @@ async def receive_chat_message(request: Request):
 
     async with httpx.AsyncClient() as client:
         url = f"http://127.0.0.1:8080/create_session/{name}"
+
         try:
             response = await client.post(url, timeout=10)
+
 
             session_id = response.json()["uuid"]
 
@@ -50,7 +52,8 @@ async def receive_chat_message(request: Request):
 
 @router.post("/chat")
 async def receive_chat_message_chat(
-    request: Request, session_id: UUID = Depends(cookie)
+    request: Request
+    # , session_id: UUID = Depends(cookie)
 ):
     data = await request.json()
 
@@ -58,7 +61,7 @@ async def receive_chat_message_chat(
         return {"status": "Error", "message": "Empty request body"}
 
     if user_message := data.get("message", "").strip():
-        payload = {"user_id": session_id, "message": user_message}
+        payload = {"user_id": 1, "message": user_message}
 
         url = "http://127.0.0.1:8000/api/v1/chat"
 
@@ -68,7 +71,7 @@ async def receive_chat_message_chat(
 
                 response = response.json()
 
-                return {"answer": response["message"].get("bot_response")}
+                return {"answer": response["message"].get("bot_response"), "steps": response["steps"]}
 
             except httpx.HTTPError as e:
                 return {"status": "Error", "message": str(e)}, response.status_code

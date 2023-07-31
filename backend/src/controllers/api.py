@@ -130,6 +130,7 @@ class ChatBot:
         last_step = get_last_step(existing_dialog)
 
         return {
+            "steps": dados_script["steps"],
             "message": new_document,
             "is_final_step": last_step + 1 == dados_script["steps"]
             if last_step is not None

@@ -1,0 +1,74 @@
+name: Continuos Integration / Continuos Delivery
+
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_run:
+    workflows: [Create a infra on Digital Ocean]
+    types:
+      - completed
+  push:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute checkout
+        uses: actions/checkout@v3
+
+      - name: Install Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Package pip and install dependencies
+        uses: BSFishy/pip-action@v1
+        with:
+          requirements: dev-requirements.txt
+          no-deps: true
+          upgrade: true
+
+      - name: Execute black lint
+        run: make format
+
+  CI-Back:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute checkout
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          file: backend/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/back-customer-care-ai:v${{ github.run_number }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/back-customer-care-ai:latest
+  CI-Front:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute checkout
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          file: frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/front-customer-care-ai:v${{ github.run_number }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/front-customer-care-ai:latest
