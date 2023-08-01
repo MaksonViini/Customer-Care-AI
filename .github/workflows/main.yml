@@ -11,27 +11,6 @@ on:
   push:
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Execute checkout
-        uses: actions/checkout@v3
-
-      - name: Install Python 3.9
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.9"
-
-      - name: Package pip and install dependencies
-        uses: BSFishy/pip-action@v1
-        with:
-          requirements: dev-requirements.txt
-          no-deps: true
-          upgrade: true
-
-      - name: Execute black lint
-        run: make format
-
   CI-Back:
     runs-on: ubuntu-latest
     steps:
