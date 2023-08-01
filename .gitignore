@@ -1,6 +1,7 @@
 /venv
 .env
-*.txt
+perguntas.txt
+txt.txt
 
 app2.py
 
