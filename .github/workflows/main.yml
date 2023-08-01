@@ -11,26 +11,26 @@ on:
   push:
 
 jobs:
-  CI-Back:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Execute checkout
-        uses: actions/checkout@v3
+  # CI-Back:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Execute checkout
+  #       uses: actions/checkout@v3
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     - name: Login to Docker Hub
+  #       uses: docker/login-action@v2
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          file: Dockerfile.backend
-          push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/back-customer-care-ai:v${{ github.run_number }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/back-customer-care-ai:latest
+  #     - name: Build and push
+  #       uses: docker/build-push-action@v4
+  #       with:
+  #         file: Dockerfile.backend
+  #         push: true
+  #         tags: |
+  #           ${{ secrets.DOCKERHUB_USERNAME }}/back-customer-care-ai:v${{ github.run_number }}
+  #           ${{ secrets.DOCKERHUB_USERNAME }}/back-customer-care-ai:latest
   CI-Front:
     runs-on: ubuntu-latest
     steps:
@@ -50,27 +50,27 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/front-customer-care-ai:v${{ github.run_number }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/front-customer-care-ai:latest
-  deploy-back:
-    needs: CI-Back
-    runs-on: ubuntu-latest
-    steps:
-      - name: Execute checkout
-        uses: actions/checkout@v3
+  #           ${{ secrets.DOCKERHUB_USERNAME }}/front-customer-care-ai:latest
+  # deploy-back:
+  #   needs: CI-Back
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Execute checkout
+  #       uses: actions/checkout@v3
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     - name: Login to Docker Hub
+  #       uses: docker/login-action@v2
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Deploy to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v1
-        with:
-          image: back-customer-care-ai:latest
-          region: us-central1
-          service: back-customer-care-ai
-          secrets: ${{ secrets.GCP_CREDENTIALS }}
+  #     - name: Deploy to Cloud Run
+  #       uses: google-github-actions/deploy-cloudrun@v1
+  #       with:
+  #         image: back-customer-care-ai:latest
+  #         region: us-central1
+  #         service: back-customer-care-ai
+  #         secrets: ${{ secrets.GCP_CREDENTIALS }}
 
   deploy-front:
     needs: CI-Front
@@ -85,10 +85,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           image: front-customer-care-ai:latest
           region: us-central1
           service: front-customer-care-ai
-          secrets: ${{ secrets.GCP_CREDENTIALS }}
