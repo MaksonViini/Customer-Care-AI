@@ -53,11 +53,15 @@ settings = get_settings()
 
 
 def get_db_url() -> str:
-    """Gets the URL of the database."""
+    env = os.getenv("ENV")
     db_host = settings.db_host
     db_password = settings.db_password
-    db_database = settings.db_database
-    db_port = settings.db_port
     db_user = settings.db_user
 
+
+    if env == "prod":
+        return f"mongodb+srv://{db_user}:{db_password}@{db_host}/"
+    db_database = settings.db_database
+    db_port = settings.db_port
     return f"mongodb://{db_user}:{db_password}@{db_host}:{db_port}/{db_database}"
+
