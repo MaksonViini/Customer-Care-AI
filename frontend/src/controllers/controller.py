@@ -34,7 +34,6 @@ async def receive_chat_message(request: Request):
         try:
             response = await client.post(url, timeout=10)
 
-
             session_id = response.json()["uuid"]
 
             print(name)
@@ -52,7 +51,7 @@ async def receive_chat_message(request: Request):
 
 @router.post("/chat")
 async def receive_chat_message_chat(
-    request: Request
+    request: Request,
     # , session_id: UUID = Depends(cookie)
 ):
     data = await request.json()
@@ -71,7 +70,10 @@ async def receive_chat_message_chat(
 
                 response = response.json()
 
-                return {"answer": response["message"].get("bot_response"), "steps": response["steps"]}
+                return {
+                    "answer": response["message"].get("bot_response"),
+                    "steps": response["steps"],
+                }
 
             except httpx.HTTPError as e:
                 return {"status": "Error", "message": str(e)}, response.status_code

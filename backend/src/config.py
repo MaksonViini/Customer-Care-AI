@@ -58,10 +58,8 @@ def get_db_url() -> str:
     db_password = settings.db_password
     db_user = settings.db_user
 
-
     if env == "prod":
         return f"mongodb+srv://{db_user}:{db_password}@{db_host}/"
     db_database = settings.db_database
     db_port = settings.db_port
     return f"mongodb://{db_user}:{db_password}@{db_host}:{db_port}/{db_database}"
-
