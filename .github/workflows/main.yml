@@ -70,7 +70,7 @@ jobs:
           image: back-customer-care-ai:latest
           region: us-central1
           service: back-customer-care-ai
-          credentials: ${{ secrets.GCP_CREDENTIALS }}
+          secrets: ${{ secrets.GCP_CREDENTIALS }}
 
   deploy-front:
     needs: CI-Front
@@ -91,4 +91,4 @@ jobs:
           image: front-customer-care-ai:latest
           region: us-central1
           service: front-customer-care-ai
-          credentials: ${{ secrets.GCP_CREDENTIALS }}
+          secrets: ${{ secrets.GCP_CREDENTIALS }}
