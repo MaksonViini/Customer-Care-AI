@@ -1,14 +1,8 @@
-import datetime
-from typing import List
+from fastapi import APIRouter
 
-import jwt
-import pandas as pd
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response
-from fastapi.security import OAuth2PasswordBearer
-from langchain.memory import MongoDBChatMessageHistory
 from starlette.responses import RedirectResponse
 
-from ..database import conversations_collection, script_collection, users_collection
+from ..database import conversations_collection
 from ..models.model import MessageModel
 from ..resources.chatbot_lc import llm_ai_chatbot
 from ..resources.similarity_model import similarity_model

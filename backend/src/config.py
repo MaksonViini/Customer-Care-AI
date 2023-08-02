@@ -21,6 +21,7 @@ class ProdConfig(BaseSettings):
     db_password: str = Field(env="DB_PASSWORD_PROD")
     db_database: str = Field(env="DB_DATABASE_PROD")
     db_port: str = Field(env="DB_PORT_PROD")
+    db_user: str = Field(env="DB_USER_PROD")
 
 
 class DevConfig(BaseSettings):
@@ -32,11 +33,8 @@ class DevConfig(BaseSettings):
     db_user: str = Field(env="DB_USER")
 
 
-class Settings(BaseModel):
-    config: DevConfig | ProdConfig | TestConfig
 
-
-def get_settings() -> Settings:
+def get_settings():
     """Gets the settings for the current environment."""
     env = os.getenv("ENV")
     if env == "test":

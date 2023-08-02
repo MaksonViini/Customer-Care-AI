@@ -1,4 +1,3 @@
-import json
 from uuid import UUID
 
 import httpx
@@ -6,17 +5,17 @@ from fastapi import Depends, Request
 from fastapi.templating import Jinja2Templates
 from pymongo import MongoClient
 
-from frontend.src.controllers.route import router
-
+from ..config import root_path
 from ..schemas.session import SessionData
+from .route import router
 from .sessions import cookie
+
+templates = Jinja2Templates(directory=f"{root_path}/templates")
+
 
 client = MongoClient("localhost", 27017)
 database = client["customer-care-db"]
 message_collection = database["messages"]
-
-
-templates = Jinja2Templates(directory="frontend/src/templates")
 
 
 @router.post("/initial-message")
