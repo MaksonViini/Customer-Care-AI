@@ -4,8 +4,6 @@ WORKDIR /code
 
 COPY frontend/requirements.txt /code/requirements.txt
 
-COPY frontend/.env /code/.env
-
 RUN pip install -r requirements.txt
 
 COPY frontend/src /code/app
