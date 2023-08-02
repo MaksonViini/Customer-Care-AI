@@ -4,10 +4,12 @@ WORKDIR /code
 
 COPY frontend/requirements.txt /code/requirements.txt
 
-# RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt
 
 COPY frontend/src /code/app
 
 EXPOSE 8080
 
-CMD ["gunicorn", "app.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8080"]
+# CMD ["gunicorn", "app.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8080"]
+
+CMD ["uvicorn" "app.main:app" "--port" "8080"]
