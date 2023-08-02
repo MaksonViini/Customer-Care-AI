@@ -67,7 +67,7 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
@@ -75,6 +75,12 @@ jobs:
           image: maksonviini/back-customer-care-ai:latest
           region: us-central1
           service: back-customer-care-ai
+          env_vars: |
+              DB_HOST_PROD=${{ secrets.DB_HOST_PROD }} 
+              DB_PORT_PROD=${{ secrets.DB_PORT_PROD }}
+              DB_PASSWORD_PROD=${{ secrets.DB_PASSWORD_PROD }} 
+              DB_DATABASE_PROD=${{ secrets.DB_DATABASE_PROD }} 
+              DB_USER_PROD=${{ secrets.DB_USER_PROD }} 
 
   deploy-front:
     needs: CI-Front
@@ -92,7 +98,7 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
@@ -100,3 +106,4 @@ jobs:
           image: maksonviini/front-customer-care-ai:latest
           region: us-central1
           service: front-customer-care-ai
+

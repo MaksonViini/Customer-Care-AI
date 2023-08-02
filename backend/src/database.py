@@ -4,7 +4,8 @@ from .config import get_db_url
 
 DB_URL = get_db_url()
 
-client = MongoClient("localhost", 27017)
+
+client = MongoClient(DB_URL)
 database = client["customer-care-db"]
 
 

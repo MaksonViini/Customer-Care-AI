@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-
 from starlette.responses import RedirectResponse
 
 from ..database import conversations_collection
