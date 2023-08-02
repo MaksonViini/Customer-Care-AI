@@ -81,6 +81,7 @@ jobs:
               DB_PASSWORD_PROD=${{ secrets.DB_PASSWORD_PROD }} 
               DB_DATABASE_PROD=${{ secrets.DB_DATABASE_PROD }} 
               DB_USER_PROD=${{ secrets.DB_USER_PROD }} 
+              ENV=${{ secrets.ENV }} 
 
   deploy-front:
     needs: CI-Front
