@@ -3,7 +3,7 @@ from typing import List
 from bson import ObjectId, json_util
 from fastapi import APIRouter, HTTPException
 
-from ..database import script_collection, conversations_collection
+from ..database import conversations_collection, script_collection
 
 router = APIRouter(
     prefix="/api",
@@ -62,7 +62,7 @@ class CrudDescription:
                 raise HTTPException(status_code=404, detail="Script not found.")
         except Exception as e:
             raise HTTPException(status_code=500, detail="Error deleting script.") from e
-        
+
     @router.delete("/v1/script/delete-many")
     async def delete_many():
         try:
@@ -83,7 +83,6 @@ class CrudMessages:
             raise HTTPException(
                 status_code=500, detail="Error retrieving scripts."
             ) from e
-
 
     @router.delete("/v1/message/")
     async def delete_many():

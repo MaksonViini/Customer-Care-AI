@@ -8,7 +8,8 @@ from fastapi_sessions.frontends.implementations import CookieParameters, Session
 from ..schemas.session import BasicVerifier, SessionData
 from .route import router
 
-cookie_params = CookieParameters(max_age=10)
+cookie_params = CookieParameters(max_age=900)
+
 cookie = SessionCookie(
     cookie_name="cookie",
     identifier="general_verifier",
@@ -30,7 +31,7 @@ verifier = BasicVerifier(
 
 
 @router.post("/create_session/{name}")
-async def create_session(name: str, response: Response):
+async def create_session(name: str):
     session_uuid = uuid4()
 
     expiration_time = datetime.now() + timedelta(minutes=15)
@@ -40,9 +41,8 @@ async def create_session(name: str, response: Response):
     )
 
     await backend.create(session_uuid, data)
-    cookie.attach_to_response(response, session_uuid)
-
-    return {"status": f"Created session for {name}", "uuid": session_uuid}
+    session_id_str = str(session_uuid.hex)
+    return {"session_id": session_id_str}
 
 
 @router.get("/whoami", dependencies=[Depends(cookie)])

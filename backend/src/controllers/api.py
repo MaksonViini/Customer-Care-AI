@@ -81,54 +81,59 @@ class ChatBot:
                 'is_final_step': False
             }
         """
+        try:
+            data = dict(details)
+            user_id_to_find = data.get("user_id")
 
-        data = dict(details)
-        user_id_to_find = data.get("user_id")
+            if not user_id_to_find or "message" not in data:
+                return {"error": "Missing required keys: 'user_id' and 'message'"}
 
-        if not user_id_to_find or "message" not in data:
-            return {"error": "Missing required keys: 'user_id' and 'message'"}
+            existing_dialog = conversations_collection.find_one(
+                {"user_id": user_id_to_find}
+            )
 
-        existing_dialog = conversations_collection.find_one(
-            {"user_id": user_id_to_find}
-        )
+            if existing_dialog:
+                most_similar_index = existing_dialog.get("dialog_id")
+                last_step = get_last_step(existing_dialog)
 
-        if existing_dialog:
-            most_similar_index = existing_dialog.get("dialog_id")
-            last_step = get_last_step(existing_dialog)
+                if not last_step or not most_similar_index:
+                    return {
+                        "error": "Missing 'last_step' or 'most_similar_index' in the existing document."
+                    }
 
-            if not last_step or not most_similar_index:
-                return {
-                    "error": "Missing 'last_step' or 'most_similar_index' in the existing document."
+                dados_script = get_dialog_by_index(most_similar_index)
+                new_document = {
+                    "step": last_step + 1,
+                    "user_message": data.get("message"),
+                    "bot_response": dados_script["script"][last_step]["message"],
                 }
+                conversations_collection.update_one(
+                    {"user_id": user_id_to_find},
+                    {"$push": {"conversation": new_document}},
+                )
+            else:
+                most_similar_index = similarity_model(data.get("message"))
+                if not most_similar_index:
+                    return {"error": "Failed to find the most similar index."}
+
+                new_document = create_conversation(
+                    data, most_similar_index, user_id_to_find
+                )
 
             dados_script = get_dialog_by_index(most_similar_index)
-            new_document = {
-                "step": last_step + 1,
-                "user_message": data.get("message"),
-                "bot_response": dados_script["script"][last_step]["message"],
+            last_step = get_last_step(existing_dialog)
+
+            return {
+                "steps": dados_script["steps"],
+                "message": new_document,
+                "is_final_step": last_step + 1 == dados_script["steps"]
+                if last_step is not None
+                else False,
             }
-            conversations_collection.update_one(
-                {"user_id": user_id_to_find}, {"$push": {"conversation": new_document}}
-            )
-        else:
-            most_similar_index = similarity_model(data.get("message"))
-            if not most_similar_index:
-                return {"error": "Failed to find the most similar index."}
-
-            new_document = create_conversation(
-                data, most_similar_index, user_id_to_find
-            )
-
-        dados_script = get_dialog_by_index(most_similar_index)
-        last_step = get_last_step(existing_dialog)
-
-        return {
-            "steps": dados_script["steps"],
-            "message": new_document,
-            "is_final_step": last_step + 1 == dados_script["steps"]
-            if last_step is not None
-            else False,
-        }
+        except Exception as e:
+            return {
+                "message": True,
+            }
 
     @router.post("/v1/chat_ai")
     async def chat_ai(details: MessageModel) -> dict:
@@ -203,7 +208,7 @@ class ChatBot:
             )
 
             new_document = {
-                "step": last_step + 1,
+                "step": last_step,
                 "user_message": data.get("message"),
                 "bot_response": ai_message,
             }

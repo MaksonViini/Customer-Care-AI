@@ -59,5 +59,4 @@ def get_db_url() -> str:
         return f"mongodb+srv://{db_user}:{db_password}@{db_host}/"
     db_port = settings.db_port
 
-
     return f"mongodb://{db_user}:{db_port}/"
