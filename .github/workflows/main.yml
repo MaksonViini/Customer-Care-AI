@@ -72,7 +72,7 @@ jobs:
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
         with:
-          image: back-customer-care-ai:latest
+          image: maksonviini/back-customer-care-ai:latest
           region: us-central1
           service: back-customer-care-ai
 
@@ -97,6 +97,6 @@ jobs:
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
         with:
-          image: front-customer-care-ai:latest
+          image: maksonviini/front-customer-care-ai:latest
           region: us-central1
           service: front-customer-care-ai
