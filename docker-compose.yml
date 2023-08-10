@@ -1,4 +1,4 @@
-version: "3"
+version: "3.9"
 
 services:
   mongo:
@@ -9,3 +9,31 @@ services:
     volumes:
       - ./data/db:/data/db
     restart: always
+
+  backend:
+    container_name: backend 
+    build: 
+      context: .
+      dockerfile: Dockerfile.backend
+    environment:
+      - OPENAI_API_KEY=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 # Your OPENAI KEY
+      - DB_HOST_DEV=mongo
+      - DB_PASSWORD_DEV=example
+      - DB_DATABASE_DEV=customer-care-db
+      - DB_PORT_DEV=27017
+      - DB_USER=localhost
+      - ENV=dev
+    ports: 
+      - 8000:8080 
+    restart: always
+
+  frontend:
+    container_name: frontend 
+    build: 
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports: 
+      - 8080:8080 
+    restart: always
+    depends_on:
+      - backend
