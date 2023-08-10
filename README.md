@@ -54,6 +54,16 @@ O projeto utiliza:
 
 Essas tecnologias são combinadas para criar uma aplicação escalável e eficiente que lida com scripts e mensagens.
 
+# Arquitetura e Deploy
+
+<!-- <img src="" alt="Texto alternativo" width="300" height="200"> -->
+
+<div style="display: flex;">
+    <img src="images/arquitetura.png" alt="Imagem 1" width="350" height="200" style="margin-right: 5px;">
+    <img src="images/deploy.png" alt="Imagem 2" width="550" height="200">
+</div>
+
+
 # Executar projeto
 
 Completar com a sua **OPENAI KEY** no arquivo **docker-compose.yml**
@@ -245,13 +255,107 @@ Observações
 
 # Backend
 
-## **Chat**
+## 1. **CHAT**
 
+## 1.1 Initial
 
+### Main Redirect
 
-## **CRUD**
+Redirects the user to the API documentation.
 
-## Scripts
+**Request:**
+
+- Method: GET
+- Endpoint: `/api/`
+
+**Response:**
+
+- Redirect to: `/docs/`
+
+---
+
+### Health Checker
+
+Checks the health of the API.
+
+**Request:**
+
+- Method: GET
+- Endpoint: `/api/v1/health-checker`
+
+**Response:**
+
+- Status Code: 200 OK
+- Content:
+  ```json
+  {
+    "Ping": "Pong"
+  }
+  ```
+## 1.2 ChatBot
+
+### User Chat
+
+Processes user chat messages and manages conversation history.
+
+**Request:**
+
+- Method: POST
+- Endpoint: `/api/v1/chat`
+- Body:
+   ```json
+      {
+      "user_id": "user123",
+      "message": "Oi, me ajude com seguro!"
+      }
+  ```
+**Response:**
+
+- Status Code: 200 OK
+- Content:
+   ```json
+  {
+    "steps": 5,
+    "message": {
+      "step": 1,
+      "user_message": "Oi, me ajude com seguro!",
+      "bot_response": "Oi, me explique mais sobre o seu problema com seguro"
+    },
+    "is_final_step": false
+  }
+  ```
+
+### AI Chat
+
+Processes user chat messages and generates AI responses.
+
+*Request:*
+
+- Method: POST
+- Endpoint: /api/v1/chat_ai
+- Body:
+
+  ```json
+    {
+      "user_id": "user123",
+      "message": "Hello, AI!"
+    }
+  ```
+
+**Response:**
+
+- Status Code: 200 OK
+- Content:
+
+  ```json
+  {
+    "AI_MESSAGE": "Hi there! How can I assist you?"
+  }
+  ```
+
+## 2. **CRUD**
+
+## 2.1 Scripts
 
 ### Get All Scripts
 
@@ -285,4 +389,150 @@ Insert a script.
     {
         "args": "Script data"
     }
+    ```
+
+**Response:**
+
+- Status Code: 200 OK
+- Content:
+
+  ```json 
+    {
+      "status": "Script inserted successfully."
+    }
+  ```
+
+### Insert Many Scripts
+
+Insert multiple scripts at once.
+
+**Request:**
+
+- Method: POST
+- Endpoint: `/api/v1/script/insert-many`
+- Body:
+    ```json 
+      [
+        {
+          "args": "Script data 1"
+        },
+        {
+          "args": "Script data 2"
+        }
+      ]
+  ```
+**Response:**
+
+- Status Code: 200 OK
+- Content:    
+    ```json 
+      {
+        "status": "Scripts inserted successfully."
+      }
+    ```
+
+### Update Script
+
+Update a script by its ID.
+
+**Request:**
+
+- Method: PUT
+- Endpoint: `/api/v1/script/{_id}`
+- URL Parameters:
+  
+    *_id*: ID of the script to be updated
+- Body:
+    ```json 
+      {
+        "args": "Updated script data"
+      }
+    ```
+**Response:**
+
+- Status Code: 200 OK
+- Content:
+  ```json 
+      {
+        "message": "Script updated successfully."
+      }
+  ```
+
+### Delete Script
+
+Delete a script by its ID.
+
+**Request:**
+
+- Method: DELETE
+- Endpoint: `/api/v1/script/{_id}`
+- URL Parameters:
+    _id: ID of the script to be deleted
+
+**Response:**
+
+- Status Code: 200 OK
+- Content:
+    ```json 
+    {
+      "message": "Script deleted successfully."
+    }
+    ```
+
+### Delete Many Scripts
+
+Delete all scripts.
+
+**Request:**
+
+- Method: DELETE
+- Endpoint: `/api/v1/script/delete-many`
+
+**Response:**
+
+- Status Code: 200 OK
+- Content:
+    ```json 
+        {
+          "message": "All scripts deleted successfully."
+        }
+    ```
+## 2.2 Messages
+
+### Get All Messages
+
+Get a list of all messages.
+
+**Request:**
+
+- Method: GET
+- Endpoint: `/api/v1/message`
+
+**Response:**
+
+- Status Code: 200 
+- Content:
+    ```json
+    {
+      "messages": "Serialized messages data"
+    }
+    ```
+### Delete All Messages
+
+Delete all messages.
+
+**Request:**
+
+- Method: DELETE
+- Endpoint: `/api/v1/message/`
+
+**Response:**
+
+- Status Code: 200 OK
+- Content:
+
+    ```json
+      {
+        "message": "All messages deleted successfully."
+      }
     ```
