@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: Dockerfile.backend
     environment:
-      - OPENAI_API_KEY=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 # Your OPENAI KEY
+      - OPENAI_API_KEY= # Your OPENAI KEY
       - DB_HOST_DEV=mongo
       - DB_PASSWORD_DEV=example
       - DB_DATABASE_DEV=customer-care-db
