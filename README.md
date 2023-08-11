@@ -69,22 +69,25 @@ Essas tecnologias são combinadas para criar uma aplicação escalável e eficie
 Completar com a sua **OPENAI KEY** no arquivo **docker-compose.yml**
 
 ```yaml
-  backend:
-    container_name: backend 
+  app:
+    container_name: customer-care-ai 
     build: 
       context: .
-      dockerfile: Dockerfile.backend
+      dockerfile: Dockerfile.dev
     environment:
       - OPENAI_API_KEY= # Your OPENAI KEY
       - DB_HOST_DEV=mongo
       - DB_PASSWORD_DEV=example
       - DB_DATABASE_DEV=customer-care-db
       - DB_PORT_DEV=27017
-      - DB_USER=localhost
+      - DB_USER=mongo
       - ENV=dev
     ports: 
-      - 8000:8080 
+      - 8000:8000 
+      - 8080:8080
     restart: always
+    networks:
+      - mynetwork
 ```
 
 Para Executar todo o projeto em containers, execute o comando abaixo no terminal para subir o compose.
