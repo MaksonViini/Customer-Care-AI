@@ -16,11 +16,11 @@ services:
       - ./data/db:/data/db
     restart: always
 
-  backend:
-    container_name: backend 
+  app:
+    container_name: customer-care-ai 
     build: 
       context: .
-      dockerfile: Dockerfile.backend
+      dockerfile: Dockerfile.dev
     environment:
       - OPENAI_API_KEY= # Your OPENAI KEY
       - DB_HOST_DEV=mongo
@@ -30,22 +30,10 @@ services:
       - DB_USER=mongo
       - ENV=dev
     ports: 
-      - 8000:8080 
+      - 8000:8000 
+      - 8080:8080
     restart: always
     networks:
       - mynetwork
 
-  frontend:
-    container_name: frontend 
-    build: 
-      context: .
-      dockerfile: Dockerfile.frontend
-    environment:
-      - ENV=dev
-    ports: 
-      - 8080:8080 
-    restart: always
-    depends_on:
-      - backend
-    networks:
-      - mynetwork
+

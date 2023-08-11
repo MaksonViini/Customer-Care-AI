@@ -47,7 +47,6 @@ class CrudDescription:
                 status_code=500, detail="Error inserting script."
             ) from e
 
-
     @router.post("/v1/script/insert-many")
     async def insert_many(args_list: List[dict]):
         """
@@ -154,4 +153,6 @@ class CrudMessages:
             else:
                 raise HTTPException(status_code=404, detail="Messages not found.")
         except Exception as e:
-            raise HTTPException(status_code=500, detail="Error deleting messages.") from e
+            raise HTTPException(
+                status_code=500, detail="Error deleting messages."
+            ) from e

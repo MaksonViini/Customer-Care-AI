@@ -133,6 +133,7 @@ class ChatBot:
         except Exception as e:
             return {
                 "message": True,
+                "error": str(e)
             }
 
     @router.post("/v1/chat_ai")
@@ -219,9 +220,9 @@ class ChatBot:
                 {"user_id": user_id_to_find}, {"$set": existing_document}, upsert=True
             )
 
-            # conversations_collection.update_one(
-            #     {"user_id": user_id_to_find}, {"$push": {"conversation": new_document}}
-            # )
+            conversations_collection.update_one(
+                {"user_id": user_id_to_find}, {"$push": {"conversation": new_document}}
+            )
 
             return {"AI_MESSAGE": ai_message}
 

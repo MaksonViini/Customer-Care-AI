@@ -90,8 +90,14 @@ Completar com a sua **OPENAI KEY** no arquivo **docker-compose.yml**
 Para Executar todo o projeto em containers, execute o comando abaixo no terminal para subir o compose.
 
 ```bash
-docker-compose -f docker-compose.yml up -d
+docker-compose -f docker-compose.dev.yml up -d
 ```
+Se quiser remover o container.
+
+```bash
+docker-compose -f docker-compose.dev.yml down
+```
+
 Depois para inserir os scripts na base de dados.
 
 ```bash

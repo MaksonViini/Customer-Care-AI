@@ -1,6 +1,5 @@
 fastapi==0.100.1
 fastapi_sessions==0.3.2
-frontend==0.0.3
 httpx==0.24.1
 pydantic==1.10.11
 pymongo==4.4.1

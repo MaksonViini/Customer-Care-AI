@@ -55,6 +55,6 @@ run_fastapi_front:
 before_push_code:
 	# ${MAKE} doc
 	# ${MAKE} req
-	${MAKE} add_dev_reqs
+	# ${MAKE} add_dev_reqs
 	${MAKE} clean
 	${MAKE} format

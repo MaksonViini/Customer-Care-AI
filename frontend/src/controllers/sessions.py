@@ -35,7 +35,6 @@ async def create_session(name: str):
     session_uuid = uuid4()
 
     expiration_time = datetime.now() + timedelta(minutes=15)
-
     data = SessionData(
         username=name, uuid=session_uuid, expiration_time=expiration_time
     )

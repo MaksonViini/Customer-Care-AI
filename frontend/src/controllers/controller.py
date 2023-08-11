@@ -1,6 +1,8 @@
+import os
 from uuid import UUID
 
 import httpx
+from dotenv import load_dotenv
 from fastapi import Depends, Request, Response
 from fastapi.templating import Jinja2Templates
 from pymongo import MongoClient
@@ -8,8 +10,7 @@ from pymongo import MongoClient
 from ..config import root_path
 from .route import router
 from .sessions import cookie
-from dotenv import load_dotenv
-import os
+import random
 
 load_dotenv()
 
@@ -19,6 +20,8 @@ templates = Jinja2Templates(directory=f"{root_path}/templates")
 client = MongoClient("localhost", 27017)
 database = client["customer-care-db"]
 message_collection = database["messages"]
+
+
 
 
 @router.post("/initial-message")
@@ -78,12 +81,15 @@ async def receive_inital_chat_message(request: Request, response: Response):
             print(name)
             print(session_id)
 
+            id = random.randint(1, 500)
+
+
             cookie.attach_to_response(response, session_id)
 
             return {
                 "answer": "Por favor, informe em poucas palavras como posso ser útil para você hoje.",
                 "Name": name,
-                "Session": session_id,
+                "Session": id,
             }
 
         except httpx.HTTPError as e:
@@ -92,7 +98,8 @@ async def receive_inital_chat_message(request: Request, response: Response):
 
 @router.post("/chat")
 async def receive_chat_message_chat(
-    request: Request, session_id: UUID = Depends(cookie)
+    request: Request
+    # , session_id: UUID = Depends(cookie)
 ):
     """Receive chat messages and provide responses using the chat service.
 
@@ -127,17 +134,18 @@ async def receive_chat_message_chat(
         }
     """
     data = await request.json()
+    print("entrou aqui")
 
     if not data:
         return {"status": "Error", "message": "Empty request body"}
 
     if user_message := data.get("message", "").strip():
-        payload = {"user_id": str(session_id.hex), "message": user_message}
+        payload = {"user_id": str(data.get("session_id", "")), "message": user_message}
 
         if os.getenv("ENV") == "dev":
-            url = "http://127.0.0.1:8000/api/v1/chat"
+            url = "http://localhost:8000/api/v1/chat"
         else:
-            url = "http://127.0.0.1:8000/api/v1/chat"
+            url = "http://localhost:8000/api/v1/chat"
 
         async with httpx.AsyncClient() as client:
             try:
@@ -158,7 +166,8 @@ async def receive_chat_message_chat(
 
 @router.post("/chat_ai")
 async def receive_chat_message_chat_ai(
-    request: Request, session_id: UUID = Depends(cookie)
+    request: Request
+    # , session_id: UUID = Depends(cookie)
 ):
     """Receive chat messages and generate AI responses.
 
@@ -196,12 +205,15 @@ async def receive_chat_message_chat_ai(
         return {"status": "Error", "message": "Empty request body"}
 
     if user_message := data.get("message", "").strip():
-        payload = {"user_id": str(session_id.hex), "message": user_message}
+        # payload = {"user_id": str(session_id.hex), "message": user_message}
+        payload = {"user_id": str(data.get("session_id", "")), "message": user_message}
+        
 
         if os.getenv("ENV") == "dev":
-            url = "http://127.0.0.1:8000/api/v1/chat_ai"
+            url = "http://localhost:8000/api/v1/chat_ai"
         else:
-            url = "http://127.0.0.1:8000/api/v1/chat_ai"
+            url = "http://localhost:8000/api/v1/chat_ai"
+
 
         async with httpx.AsyncClient() as client:
             try:
@@ -212,7 +224,7 @@ async def receive_chat_message_chat_ai(
                 return {"answer": response}
 
             except httpx.HTTPError as e:
-                return {"status": "Error", "message": str(e)}, response.status_code
+                return {"status": "Error", "message": str(e)}
 
 
 @router.get("/")

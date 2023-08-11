@@ -256,6 +256,7 @@
                 this.steps = 0
                 this.is_final_step = "False"
                 this.randomNumber = 999999;
+                this.session_id = 0;
             }
 
             display() {
@@ -324,10 +325,9 @@
                 let sessionCookie = document.cookie;
 
                 if (this.messageCount > 1 && this.messageCount != this.randomNumber && this.is_final_step != "True") {
-                    // Altere a URL e os parâmetros aqui para a rota "testando" no servidor
-                    fetch('http://127.0.0.1:8080/chat', {
+                    fetch('http://localhost:8080/chat', {
                         method: 'POST',
-                        body: JSON.stringify({ message: text1 }),
+                        body: JSON.stringify({ message: text1, session_id: this.session_id}),
                         mode: 'cors',
                         headers: {
                             'Content-Type': 'application/json',
@@ -354,15 +354,15 @@
                 else if (this.messageCount == this.randomNumber || this.is_final_step == "True") {
                     // Altere a URL e os parâmetros aqui para a rota padrão no servidor
 
-                    if (this.messageCount > 8) {
-                        let msg2 = { name: 'Bot', message: "Custa caro as requisições, limitamos em 8 interações!" };
+                    if (this.messageCount > 12) {
+                        let msg2 = { name: 'Bot', message: "Custa caro as requisições, limitamos em 12 interações!" };
                         this.messages.push(msg2);
                         this.updateChatText(chatbox);
                         textField.value = '';
                     } else {
-                        fetch('http://127.0.0.1:8080/chat_ai', {
+                        fetch('http://localhost:8080/chat_ai', {
                             method: 'POST',
-                            body: JSON.stringify({ message: text1 }),
+                            body: JSON.stringify({ message: text1 , session_id: this.session_id }),
                             mode: 'cors',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -386,7 +386,7 @@
                 }
 
                 else {
-                    fetch('http://127.0.0.1:8080/initial-message', {
+                    fetch('http://localhost:8080/initial-message', {
                         method: 'POST',
                         body: JSON.stringify({ message: text1 }),
                         headers: {
@@ -398,6 +398,7 @@
                         .then(r => {
                             let msg2 = { name: 'Bot', message: r.answer };
                             this.messages.push(msg2);
+                            this.session_id = r.Session
                             this.updateChatText(chatbox);
                             textField.value = '';
                         })
