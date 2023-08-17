@@ -1,9 +1,10 @@
+import os
+
 import joblib
 import pandas as pd
 import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import os
 
 from ..database import script_collection
 
@@ -49,7 +50,9 @@ def load_data():
 
 
 def load_model():
-    modelo_file = f"{os.path.dirname(os.path.realpath(__file__))}/modelo_vectorizer.joblib"
+    modelo_file = (
+        f"{os.path.dirname(os.path.realpath(__file__))}/modelo_vectorizer.joblib"
+    )
     return joblib.load(modelo_file)
 
 

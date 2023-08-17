@@ -1,4 +1,5 @@
 import os
+import random
 from uuid import UUID
 
 import httpx
@@ -10,7 +11,6 @@ from pymongo import MongoClient
 from ..config import root_path
 from .route import router
 from .sessions import cookie
-import random
 
 load_dotenv()
 
@@ -20,8 +20,6 @@ templates = Jinja2Templates(directory=f"{root_path}/templates")
 client = MongoClient("localhost", 27017)
 database = client["customer-care-db"]
 message_collection = database["messages"]
-
-
 
 
 @router.post("/initial-message")
@@ -83,7 +81,6 @@ async def receive_inital_chat_message(request: Request, response: Response):
 
             id = random.randint(1, 500)
 
-
             cookie.attach_to_response(response, session_id)
 
             return {
@@ -98,7 +95,7 @@ async def receive_inital_chat_message(request: Request, response: Response):
 
 @router.post("/chat")
 async def receive_chat_message_chat(
-    request: Request
+    request: Request,
     # , session_id: UUID = Depends(cookie)
 ):
     """Receive chat messages and provide responses using the chat service.
@@ -166,7 +163,7 @@ async def receive_chat_message_chat(
 
 @router.post("/chat_ai")
 async def receive_chat_message_chat_ai(
-    request: Request
+    request: Request,
     # , session_id: UUID = Depends(cookie)
 ):
     """Receive chat messages and generate AI responses.
@@ -207,13 +204,11 @@ async def receive_chat_message_chat_ai(
     if user_message := data.get("message", "").strip():
         # payload = {"user_id": str(session_id.hex), "message": user_message}
         payload = {"user_id": str(data.get("session_id", "")), "message": user_message}
-        
 
         if os.getenv("ENV") == "dev":
             url = "http://localhost:8000/api/v1/chat_ai"
         else:
             url = "http://localhost:8000/api/v1/chat_ai"
-
 
         async with httpx.AsyncClient() as client:
             try:

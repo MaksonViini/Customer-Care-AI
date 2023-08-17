@@ -5,7 +5,6 @@ from starlette.staticfiles import StaticFiles
 from .config import root_path
 from .controllers import controller
 
-
 app = FastAPI()
 
 app.add_middleware(
@@ -17,5 +16,9 @@ app.add_middleware(
 )
 
 
-app.mount("/static", app=StaticFiles(directory=f"{root_path}/static", check_dir=False), name="static")
+app.mount(
+    "/static",
+    app=StaticFiles(directory=f"{root_path}/static", check_dir=False),
+    name="static",
+)
 app.include_router(controller.router)

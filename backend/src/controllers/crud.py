@@ -10,6 +10,7 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+
 class CrudDescription:
     @router.get("/v1/script")
     async def get_all():

@@ -58,7 +58,7 @@ def llm_ai_chatbot(human_input, input_memory):
     )
 
     template = """Você é um chatbot conversando com um humano sobre seguros e créditos. 
-        Por favor, responda em Português BR e use no máximo 2 linhas. Se o humano quiser falar com algum atendente
+        Por favor, responda em Português BR e use no máximo 2 linhas. Se e somente se o humano quiser falar com algum atendente
         por favor, diga que "Um atendente entrarar em contato em breve, aguarde!".
 
     Context: {entities}

@@ -131,10 +131,7 @@ class ChatBot:
                 else False,
             }
         except Exception as e:
-            return {
-                "message": True,
-                "error": str(e)
-            }
+            return {"message": True, "error": str(e)}
 
     @router.post("/v1/chat_ai")
     async def chat_ai(details: MessageModel) -> dict:
